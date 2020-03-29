@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beacon</title>
+  </head>
+  <body>
+    <script>
+      // sendbeacon + nodejs 踩坑记录
+      // https://blog.csdn.net/u012308481/article/details/89495506
+      // 使用sendBeacon进行前端数据上报
+      // https://www.jianshu.com/p/04e88271a8f2?from=singlemessage
+      // raw-body
+      // https://github.com/stream-utils/raw-body#readme
+
+      window.addEventListener("unload", function logData() {
+        // const result = navigator.sendBeacon(
+        //   "http://localhost:5000/api/beacon",
+        //   JSON.stringify({
+        //     userId: 10,
+        //     price: 1000,
+        //     msg: "卸载前的遗言"
+        //   })
+        // );
+        // console.log("sendBeacon result", result);
+      });
+
+      // application/x-www-form-urlencoded
+      function sendBeaconByUrlencoded() {
+        let blob = new Blob(["name=tom&price=10"], {
+          type: "application/x-www-form-urlencoded"
+        });
+        const result = navigator.sendBeacon(
+          "http://localhost:5000/api/beacon/urlencoded",
+          blob
+        );
+        console.log("sendBeacon result", result);
+      }
+
+      //   sendBeaconByUrlencoded();
+
+      // text
+      function sendBeaconByText() {
+        const data = JSON.stringify({
+          name: "共产党"
+        });
+        const result = navigator.sendBeacon(
+          "http://localhost:5000/api/beacon/text",
+          data
+        );
+        console.log("sendBeacon result", result);
+      }
+
+    //   sendBeaconByText();
+
+      // formdata
+      function sendBeaconByFormData() {
+        const fd = new FormData();
+        fd.append("name", "tom");
+        const result = navigator.sendBeacon(
+          "http://localhost:5000/api/beacon/formdata",
+          fd
+        );
+        console.log("sendBeacon result", result);
+      }
+
+      sendBeaconByFormData();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ],
+    "compilerOptions": {
+        "outDir": "./dist",
+        "noImplicitAny": false,
+        "module": "CommonJS",
+        "target": "es5",
+        "moduleResolution": "node",
+        "jsx": "preserve",
+        "allowJs": true,
+        "sourceMap": false,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "allowUmdGlobalAccess": true,
+        "noEmitOnError": false,
+        "experimentalDecorators": true
+    }
+}
