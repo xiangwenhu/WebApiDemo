@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Channel Messaging API</title>
+  </head>
+  <body>
+    <script>
+      function deepClone(target) {
+        return new Promise(resolve => {
+          const channel = new MessageChannel();
+          channel.port2.postMessage(target);
+          channel.port1.onmessage = ev => {
+            resolve(ev.data);
+          };
+        });
+      }
+      deepClone({
+        a: 10,
+        b: "哈哈",
+        c: null,
+        d: undefined,
+        e: [1, 2, 3]
+      }).then(d => console.log("deepClone", d));
+    </script>
+    <script>
+      const mc = new MessageChannel();
+      const { port1, port2 } = mc;
+
+      port1.postMessage(123);
+      setTimeout(() => {
+        port2.onmessage = eve => {
+          console.log("received message: ", eve.data);
+        };
+      }, 1000);
+    </script>
+  </body>
+</html>

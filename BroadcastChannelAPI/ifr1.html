@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+      iframe1
+    <script>
+      const ch1 = new BroadcastChannel("channel1");
+      ch1.onmessage = eve => {
+        console.log("ch1:", eve.data);
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Broadcast Channel API</title>
+  </head>
+  <body>
+    <iframe src="./ifr1.html" onload="onIframeLoad()"></iframe>
+    <script>
+
+    // MessageChannel和BroadcastChannel
+    // https://blog.csdn.net/weixin_34107955/article/details/91370104
+
+      const bc = new BroadcastChannel("channel1");
+      const bc2 = new BroadcastChannel("channel1");
+      const bc3 = new BroadcastChannel("channel1");
+
+      bc2.onmessage = eve => {
+        console.log("bc2:", eve.data);
+      };
+
+      bc3.onmessage = eve => {
+        console.log("bc3:", eve.data);
+      };
+
+      setTimeout(() => {
+        bc.postMessage({ message: "hello" });
+      }, 0);
+
+      function onIframeLoad(){
+          bc.postMessage("ifr1 loaded");
+      }
+
+    </script>
+  </body>
+</html>
