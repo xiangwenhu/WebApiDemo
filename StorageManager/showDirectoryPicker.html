@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StorageManager</title>
+  </head>
+  <body>
+    <button onclick="onBtnCick(this)">获取目录</button>
+
+    <script>
+      async function onBtnCick(e) {
+        getDir();
+      }
+
+      async function getDir() {
+        const dirHandle = await window.showDirectoryPicker();
+
+        // const entries = dirHandle.entries();
+
+        const fileEntries = await getAllFiles(dirHandle);
+
+        console.log(fileEntries.map((e) => e.path));
+      }
+
+      async function getAllFiles(directoryHandle, currentPath = "") {
+        try {
+          // 准备一个数组用于存储文件路径
+          let entries = [];
+
+          // 定义一个递归函数用于遍历目录，并构建文件路径
+          async function traverseDirectory(directoryHandle, path) {
+            for await (const entry of directoryHandle.values()) {
+              const entryPath = path ? `${path}/${entry.name}` : entry.name;
+
+              if (entry.kind === "file") {
+                // 如果是文件，则添加到文件路径数组
+                entry.path = entryPath;
+                entries.push(entry);
+              } else if (entry.kind === "directory") {
+                // 如果是目录，则递归调用自身继续遍历
+                await traverseDirectory(entry, entryPath);
+              }
+            }
+          }
+
+          // 开始遍历所选目录，并构建文件路径
+          await traverseDirectory(directoryHandle, currentPath);
+
+    
+          return entries;
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

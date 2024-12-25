@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SaveFilePicker</title>
+  </head>
+  <body>
+    <button onclick="onSaveFile()">点击保存</button>
+
+    <script>
+      async function onSaveFile() {
+        try {
+          const opts = {
+            types: [
+              {
+                description: "Text file",
+                accept: { "text/plain": [".txt"] },
+              },
+            ],
+          };
+          const fileHandle = await window.showSaveFilePicker(opts);
+          const writable = await fileHandle.createWritable();
+
+          const contents = "你们好啊";
+          // 将文件内容写入到流中。
+          await writable.write(contents);
+
+          // 关闭文件并将内容写入磁盘。
+          await writable.close();
+        } catch (err) {
+          console.log("取消了：或者异常");
+        }
+      }
+    </script>
+  </body>
+</html>
