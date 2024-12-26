@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StorageManager</title>
+  </head>
+  <body>
+    <div>
+      <textarea id="contentArea" rows="4" cols="50">测试内容</textarea>
+      <br />
+      <button onclick="onSave(this)">写入</button>
+      <button onclick="onRead(this)">读取</button>
+    </div>
+    <div id="contentContainer"></div>
+
+    <script src="./js/util.js"></script>
+    <script>
+      async function onSave(e) {
+        // 获取草稿文件的句柄
+        const root = await navigator.storage.getDirectory();
+        const draftHandle = await root.getFileHandle("draft.txt", {
+          create: true,
+        });
+
+        let file = await draftHandle.getFile();
+        const fileSize = file.size;
+
+        // 获取同步访问句柄
+        const accessHandle = await draftHandle.createWritable();
+
+        // await accessHandle.write({ type: "seek", position: fileSize });
+        await accessHandle.write({
+          type: "write",
+          data: contentArea.value,
+          position: fileSize
+        });
+
+        // 如果完成，请始终关闭 FileSystemSyncAccessHandle
+        accessHandle.close();
+   
+      }
+
+
+      async function onRead(e) {
+        // 获取草稿文件的句柄
+        const root = await navigator.storage.getDirectory();
+        const draftHandle = await root.getFileHandle("draft.txt", {
+          create: true,
+        });
+
+        let file = await draftHandle.getFile();
+
+        const content = await readFileAsText(file);
+        setContent(content);
+      }
+    </script>
+  </body>
+</html>

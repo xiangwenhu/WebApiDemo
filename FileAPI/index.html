@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>index</title>
+  </head>
+  <body>
+    <ul id="ulEl"></ul>
+
+    <script>
+      const items = [
+        {
+          url: "./inputFile.html",
+          title: "input标签",
+        },
+        {
+          url: "./showOpenFilePicker.html",
+          title: "showOpenFilePicker",
+        },
+        {
+          url: "./showSaveFilePicker.html",
+          title: "showSaveFilePicker",
+        },
+
+        {
+          url: "./showDirectoryPicker.html",
+          title: "showDirectoryPicker",
+        },
+        {
+          url: "./StorageManager.getDirectory.html",
+          title: "StorageManager.getDirectory",
+        },
+      ];
+
+      const htmlStr = items
+        .map(
+          (it) => `<li><a href="${it.url}" target="_blank">${it.title}</a></li>`
+        )
+        .join("");
+
+      ulEl.innerHTML = htmlStr;
+    </script>
+  </body>
+</html>

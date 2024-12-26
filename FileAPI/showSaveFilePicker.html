@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>showSaveFilePicker</title>
+    <style>
+      body {
+        margin: 16px;
+      }
+    </style>
+  </head>
+  <body>
+
+
+    <div>
+       <textarea id="textareaContent" cols="50" rows="4">测试内容</textarea>
+    </div>
+
+    <button id="btnSave">保存文件并indexedDB保存handle</button>
+    <button id="btnUse">使用indexedDB保存的handle</button>
+    <button id="btnUseAndRender">使用indexedDB保存的handle读取文件内容</button>
+    
+
+    <div id="contentContainer"></div>
+
+    <script src="./js/util.js"></script>
+
+    <script>
+      var opts = {
+        types: [
+          {
+            description: "Text file",
+            accept: { "text/plain": [".txt"] },
+          },
+        ],
+      };
+    </script>
+
+    <script type="module">
+      import { get, set } from "https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm";
+
+      async function saveHandle() {
+        clearContent();
+
+        const fileHandle = await window.showSaveFilePicker(opts);
+
+        await set("file-save-handle-1", {
+          addTime: Date.now(),
+          handle: fileHandle,
+        });
+
+        const contents = `${textareaContent.value} + ${new Date().toLocaleString()}`;
+        await writeFileContent(fileHandle, contents);
+      }
+
+      async function useHandle() {
+        clearContent();
+
+        const handleInfo = await get("file-save-handle-1");
+        if (!handleInfo) alert("请先保存handle");
+
+        const handle = handleInfo.handle;
+        const hasPermission = await verifyPermission(handle);
+        if (!hasPermission) return alert(`无权限`);
+        const contents = `${textareaContent.value} + ${new Date().toLocaleString()}`;
+
+        await writeFileContent(handle, contents);
+      }
+
+      async function useAndRender() {
+        clearContent();
+
+        const handleInfo = await get("file-save-handle-1");
+        if (!handleInfo) alert("请先保存handle");
+
+        const handle = handleInfo.handle;
+
+        const file = await handle.getFile();
+
+        const text = await readFileAsText(file);
+
+        setContent(text);
+      }
+
+      document
+        .getElementById("btnSave")
+        .addEventListener("click", saveHandle, false);
+
+      document
+        .getElementById("btnUse")
+        .addEventListener("click", useHandle, false);
+
+      document
+        .getElementById("btnUseAndRender")
+        .addEventListener("click", useAndRender, false);
+    </script>
+  </body>
+</html>

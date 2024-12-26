@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>showDirectoryPicker</title>
+    <style>
+      body {
+        margin: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <button onclick="openDir(this)">获取目录并罗列</button>
+    <button onclick="openDirAndAutoSave(this)">
+      获取目录并罗列 + 内存缓存
+    </button>
+    <br />
+    <button id="btnSave">获取目录并indexedDB保存handle</button>
+    <button id="btnUse">使用indexedDB保存的handle罗列文件</button>
+    <div id="contentContainer"></div>
+
+ 
+
+    <script src="./js/util.js"></script>
+
+    <script>
+      async function openDir(e) {
+        getDir();
+      }
+
+      let dirHandle;
+      async function getDir() {
+        clearContent();
+        const dirHandle = await window.showDirectoryPicker({
+          mode: "readwrite",
+        });
+
+        listFiles(dirHandle);
+      }
+
+      async function openDirAndAutoSave() {
+        clearContent();
+        if (dirHandle) {
+          const hasPermission = await verifyPermission(dirHandle);
+          await delay();
+          listFiles(dirHandle);
+          return;
+        }
+
+        dirHandle = await window.showDirectoryPicker({
+          mode: "readwrite",
+        });
+
+        listFiles(dirHandle);
+      }
+    </script>
+
+    <script type="module">
+      import { get, set } from "https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm";
+
+      async function saveHandle() {
+        clearContent();
+
+        const dirHandle = await window.showDirectoryPicker({
+          mode: "readwrite",
+        });
+
+        await set("dir-handle-1", {
+          addTime: Date.now(),
+          handle: dirHandle,
+        });
+      }
+
+      async function useHandle() {
+        clearContent();
+
+        const handleInfo = await get("dir-handle-1");
+        if (!handleInfo) alert("请先保存handle");
+
+        const handle = handleInfo.handle;
+        const hasPermission = await verifyPermission(handle);
+        if (!hasPermission) return alert(`无权限`);
+        listFiles(handle);
+      }
+
+      document
+        .getElementById("btnSave")
+        .addEventListener("click", saveHandle, false);
+
+      document
+        .getElementById("btnUse")
+        .addEventListener("click", useHandle, false);
+    </script>
+  </body>
+</html>
